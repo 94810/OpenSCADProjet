@@ -14,7 +14,7 @@ ProduceSet=1; //[0:One token, 1:Set of Token]
 //Numbre of side for the shape (produce a valide Reuleux Polygon if odd)
 side=5; // [2:12]
 //Diameter of the shape in mm
-diameter=20;
+diameter=24;
 //thickness of the shape in mm (not the total thickness if you use the stackRing)
 thick=4;
 
