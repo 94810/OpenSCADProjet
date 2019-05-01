@@ -54,14 +54,22 @@ $fn=100;
 // Diameter of the biggest piece of the set
 pieceOffSet=24;
 //Number of piece before changing line
-maxX=5;
+maxX=4;
 
 //The set to produce each piece is describe as [side, diameter, thickness, string thickness, string, font, font ratio, pop text, stack ring, stack ring thickness]
 //Set=[[3,20,4,0.8,"1","UnifrakturCook",0.84,false,4,true,1],[5,20,4,0.8,"6","UnifrakturCook",0.84,true,4,true,1],[7,20,6,0.8,"X","UnifrakturCook",0.84,false,4,true,1],[7,20,3,0.8,"£","Helvetica",0.84,false,4,false,1], [3,26,5,0.8,"42","Permanent Marker",0.60,false,4,true,1], [5,15,5,1.2,"#","UnifrakturCook",0.8,true,4,false,1]];
 //Set used for the exemple stl
 Set=[
-[5,24,4,0.8,"9","Elric",0.9,false,4,true,1],
-[5,24,4,0.8,"10","Elric",0.7,false,4,true,1],
+	[6,24,4,0.8,"11","Elric",0.75,false,4,true,1],
+	[6,24,4,0.8,"12","Elric",0.75,false,4,true,1],
+	[6,24,4,0.8,"13","Elric",0.75,false,4,true,1],
+	[6,24,4,0.8,"14","Elric",0.75,false,4,true,1],
+	[6,24,4,0.8,"15","Elric",0.75,false,4,true,1],
+	[6,24,4,0.8,"16","Elric",0.75,false,4,true,1],
+	[6,24,4,0.8,"17","Elric",0.75,false,4,true,1],
+	[6,24,4,0.8,"18","Elric",0.75,false,4,true,1],
+	[6,24,4,0.8,"19","Elric",0.75,false,4,true,1],
+	[6,24,4,0.8,"20","Elric",0.7,false,4,true,1],
 ];
 function rayon(diameter, baseAngle) = diameter / (2*sin((360-baseAngle)/4));
 function dot(baseAngle, nb, diameter) = rayon(diameter, baseAngle) * [-sin(baseAngle*nb),cos(baseAngle*nb)];
