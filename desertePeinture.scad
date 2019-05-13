@@ -2,16 +2,13 @@ include <Basolur.scad>
 
 $fn=100;
 
+diam=25;
 
-module drop(diam=10){
-  rotate([0,0, 45]) union(){
-    circle(d=diam);
-    difference(){
-      square([diam, diam], center=true);
-      translate([-diam/2, 0]) square([diam, diam]);
-      translate([-diam/2, 0]) square([diam, diam], center=true);
-    }
-  }
+function conscrit(x) = x;
+
+difference(){
+  reuleaux(side=3, diameter=conscrit(diam));
+  circle(r=diam-rayon(diam, 360/3));
 }
+%circle(conscrit(diam)/2);
 
-drop();
