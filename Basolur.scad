@@ -8,7 +8,7 @@ function bezierPoint(controlPoints, t) = _bezierPoint(controlPoints, len(control
 function bezierCurve(controlPoints, res) = [for(i=[0:res:1])bezierPoint(controlPoints, i)];
 
 // Reuleaux polygone
-function rayon(diameter, baseAngle) = diameter;// diameter / (2*sin((360-baseAngle)/4));
+function rayon(diameter, baseAngle) = diameter / (2*sin((360-baseAngle)/4));
 function dot(baseAngle, nb, diameter) = rayon(diameter, baseAngle) * [-sin(baseAngle*nb),cos(baseAngle*nb)];
 module reuleaux(side=3, diameter=10){
 		dots = [for(i=[0:side-1])dot(360/side, i, diameter)];
