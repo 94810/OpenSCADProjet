@@ -1,6 +1,6 @@
 include <Basolur.scad>
 
-$fn=100;
+$fn=200;
 
 // [ Render Value ]
 // 1 edit button curve
@@ -14,7 +14,7 @@ curveEdit=5;
 reso=0.05;
 
 cubeSize=0.1;
-side=7;
+side=5;
 tallShell=12;
 shellThick=0.4*3;
 topThick=1;
@@ -30,6 +30,8 @@ switchCrossXThick=1.1;
 switchCrossYThick=1.3;
 switchCrossheight=3.60;
 crossTol=0.2;
+
+switchDepth=3.80;
 
 dots = [
   [14,0],
@@ -49,17 +51,31 @@ buttonDiam = res[0][0]*2;
 internalLastDot=buttonDiam/2 + extShellTol;
 
 bDots = [
-  [internalLastDot+3, 0],
-  [internalLastDot+0.5, 4],
+  [internalLastDot+6, 0],
+  [internalLastDot+0.5, 3],
   [internalLastDot, 0]
 ];
 
 border = bezierCurve(bDots, reso);
 
+module cross(){
+  translate([0,0,switchCrossheight/2])union(){
+    cube([switchCrossSize+crossTol, switchCrossXThick+crossTol, switchCrossheight], center=true);
+    cube([switchCrossYThick+crossTol, switchCrossSize+crossTol, switchCrossheight], center=true);
+  }
+
+  difference(){
+    cylinder(d=2*switchCrossSize, h=switchCrossheight);
+    cylinder(d=switchCrossSize+1, h=2*switchCrossheight+1, center=true);
+  }
+  
+}
+
+
 module preview(){
 
   translate([0,4,0])cube([50,cubeSize,cubeSize]);
-  translate([15,0,0])cube([cubeSize,50,cubeSize]);
+  translate([14,0,0])cube([cubeSize,50,cubeSize]);
 
   for(i=res){
     translate(i) cube(cubeSize);
@@ -83,7 +99,7 @@ module Bpreview(){
   }
 }
 
-module hulled(arr, i, thick=0.001, tol=0.1){
+module hulled(arr, i, thick=0.001, tol=0){
   hull(){
     translate([0, 0, arr[i][1]-tol/2]) linear_extrude(thick+tol) reuleaux(side, diameter=2*arr[i][0]);
     translate([0, 0, arr[i+1][1]-tol/2]) linear_extrude(thick+tol) reuleaux(side, diameter=2*arr[i+1][0]);
@@ -95,7 +111,7 @@ module hat(){
 
   difference(){
     union() for(i=[0:unionUntil-1]) hulled(res, i);
-    translate([0,0,0.2]) union() for(i=[unionUntil:len(res)-2]) hulled(res, i);
+    translate([0,0,0]) union() for(i=[unionUntil:len(res)-2]) hulled(res, i);
   }
 }
 
@@ -105,7 +121,7 @@ module holeBorder(){
   difference(){
     union() for(i=[0:unionUntil-1]) hulled(border, i);
     
-    translate([0,0,0.1]) union() for(i=[unionUntil:len(res)-2]) hulled(border, i);
+    translate([0,0,0]) union() for(i=[unionUntil:len(res)-2]) hulled(border, i);
     
     translate([0,0,-2]) linear_extrude(4) reuleaux(side, diameter=border[len(border)-1][0]*2);
   }
@@ -116,16 +132,22 @@ module internShell(){
     linear_extrude(tallShell) reuleaux(side, diameter=buttonDiam);
     linear_extrude(tallShell-topThick) reuleaux(side, diameter=2*(buttonDiam/2-shellThick));
   }
+
+  difference(){
+    cylinder(d1=5, d2=11, h=tallShell);
+    cross();
+  }
+  
 }
 
 module extShell(){
   intDiam = buttonDiam + 2*extShellTol;
 
   difference(){
-    cylinder(d=intDiam + 2*extShellThick, h=tallShell);
-    linear_extrude(tallShell) reuleaux(side, diameter=intDiam);
+    cylinder(d=intDiam + 2*extShellThick, h=tallShell+switchDepth);
+    linear_extrude(tallShell+switchDepth) reuleaux(side, diameter=intDiam);
   }
-  
+
   extSwitchSupport();
 }
 
@@ -137,7 +159,7 @@ module button(){
 module extSwitchSupport(){
    intDiam=buttonDiam + 2*extShellTol;
    side=kailhBox+switchTol;
-   difference(){
+   translate([0,0, -extBottomThick]) difference(){
     cylinder(d=intDiam + 2*extShellThick, h=extBottomThick);
     cube([side, side, 40], center=true);
    }
@@ -146,22 +168,10 @@ module extSwitchSupport(){
 module ext(){
     union(){
       extShell();
-      translate([0,0,tallShell])holeBorder();
+      translate([0,0,tallShell+switchDepth]) holeBorder();
     }
 }
 
-module cross(){
-  translate([0,0,switchCrossheight/2])union(){
-    cube([switchCrossSize+crossTol, switchCrossXThick+crossTol, switchCrossheight], center=true);
-    cube([switchCrossYThick+crossTol, switchCrossSize+crossTol, switchCrossheight], center=true);
-  }
-
-  difference(){
-    cylinder(d=2*switchCrossSize, h=switchCrossheight);
-    cylinder(d=switchCrossSize+1, h=2*switchCrossheight+1, center=true);
-  }
-  
-}
 
 if(curveEdit==2){
   button();
@@ -172,7 +182,7 @@ if(curveEdit==2){
 } else if(curveEdit==3){
   Bpreview();
 } else if(curveEdit==5){
-  button();
+  translate([0,0,switchDepth]) button();
   ext();
 } else if(curveEdit==6){
   cross();
