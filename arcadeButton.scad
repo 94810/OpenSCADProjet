@@ -1,6 +1,7 @@
 include <Basolur.scad>
+include <turboThread.scad>
 
-$fn=200;
+$fn=100;
 
 // [ Render Value ]
 // 1 edit button curve
@@ -10,12 +11,12 @@ $fn=200;
 // 5 Both
 // 6 cross module
 
-curveEdit=5;
-reso=0.05;
+curveEdit=4;
+reso=0.1;
 
 cubeSize=0.1;
 side=5;
-tallShell=12;
+tallShell=20;
 shellThick=0.4*3;
 topThick=1;
 extShellTol=0.5;
@@ -29,9 +30,14 @@ switchCrossSize=4;
 switchCrossXThick=1.1;
 switchCrossYThick=1.3;
 switchCrossheight=3.60;
+switchSup=0.1;
 crossTol=0.2;
 
-switchDepth=3.80;
+switchDepth=5-3.80;
+
+
+pitch=2;
+nbTurn=(tallShell-switchDepth)/pitch;
 
 dots = [
   [14,0],
@@ -52,7 +58,7 @@ internalLastDot=buttonDiam/2 + extShellTol;
 
 bDots = [
   [internalLastDot+6, 0],
-  [internalLastDot+0.5, 3],
+  [internalLastDot+0.5, 4],
   [internalLastDot, 0]
 ];
 
@@ -60,13 +66,13 @@ border = bezierCurve(bDots, reso);
 
 module cross(){
   translate([0,0,switchCrossheight/2])union(){
-    cube([switchCrossSize+crossTol, switchCrossXThick+crossTol, switchCrossheight], center=true);
-    cube([switchCrossYThick+crossTol, switchCrossSize+crossTol, switchCrossheight], center=true);
+    cube([switchCrossSize+crossTol, switchCrossXThick+crossTol, switchCrossheight+switchSup], center=true);
+    cube([switchCrossYThick+crossTol, switchCrossSize+crossTol, switchCrossheight+switchSup], center=true);
   }
 
   difference(){
-    cylinder(d=2*switchCrossSize, h=switchCrossheight);
-    cylinder(d=switchCrossSize+1, h=2*switchCrossheight+1, center=true);
+    cylinder(d=2*switchCrossSize, h=switchCrossheight+switchSup);
+    cylinder(d=switchCrossSize+1, h=2*switchCrossheight+switchSup+1, center=true);
   }
   
 }
@@ -116,12 +122,12 @@ module hat(){
 }
 
 module holeBorder(){
-    unionUntil = findMaxYindex(res);
+  unionUntil = findMaxYindex(border);
 
   difference(){
-    union() for(i=[0:unionUntil-1]) hulled(border, i);
+    union() for(i=[0:unionUntil+1]) hulled(border, i);
     
-    translate([0,0,0]) union() for(i=[unionUntil:len(res)-2]) hulled(border, i);
+    translate([0,0,0]) union() for(i=[unionUntil:len(border)-2]) hulled(border, i);
     
     translate([0,0,-2]) linear_extrude(4) reuleaux(side, diameter=border[len(border)-1][0]*2);
   }
@@ -135,7 +141,7 @@ module internShell(){
 
   difference(){
     cylinder(d1=5, d2=11, h=tallShell);
-    cross();
+    translate ([0,0,-switchSup]) cross();
   }
   
 }
@@ -143,8 +149,13 @@ module internShell(){
 module extShell(){
   intDiam = buttonDiam + 2*extShellTol;
 
+
+
   difference(){
-    cylinder(d=intDiam + 2*extShellThick, h=tallShell+switchDepth);
+    union(){
+      cylinder(d=intDiam + 2*extShellThick, h=tallShell+switchDepth);
+      translate([0,0,2]) thread(pitch, intDiam + 2*extShellThick+2.2, 1, nbTurn);
+    }
     linear_extrude(tallShell+switchDepth) reuleaux(side, diameter=intDiam);
   }
 
