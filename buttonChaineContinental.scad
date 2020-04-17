@@ -21,12 +21,12 @@ HolderInerH1 = HolderOuterH1-HolderTopEp-HolderBottomEp;
 HolderInerH2 =HolderOuterH2-HolderTopEp-HolderBottomEp;
 
 // BASE
-BaseLong=18.5;
-BaseFracture=8.5;
-BaseLarg=15;
+BaseLong=17.5;
+BaseFracture=8;
+BaseLarg=15.5;
 BaseLargMinus=0.5;
 BaseEp=1;
-BaseKnurledEp=5;
+BaseKnurledEp=7.5;
 BaseEndHeight = 2;
 BaseFractureHeight=2.5;
 BaseFractureWide = linearInterpolation(BaseLarg, BaseLarg-BaseLargMinus, BaseFracture/BaseLong);
@@ -67,8 +67,8 @@ module wedge(size=[
 }
 
 module sep(wide=7, epHole=1){
-  d1=3; 
-  d2=1.2;
+  d1=4; 
+  d2=1.6;
   cube([6, wide, epHole]);
   difference(){
     translate([0,0,1]) cube([d1/2, wide, d1/2]);
@@ -105,14 +105,14 @@ module holder() {
 
     translate([0, 0, 1])  sep(HolderWide);
 
-    translate([2, halfDist(HolderWide, 1), 0]) cube([5, 1, 2]); // trou
+    translate([2, halfDist(HolderWide, 1.2), 0]) cube([5, 1.2, 2]); // trou
   }
 
-   translate([7, halfDist(HolderWide, 1+2*0.5), 0.5]) rail([HolderLong/2, 0.5, 1], HolderRailDist); // rail bottom
+   translate([7, halfDist(HolderWide, 1+2*1), 1]) rail([HolderLong/2, 1, 1], HolderRailDist); // rail bottom
 
-   translate ([1, halfDist(HolderWide, 1+2*0.5), HolderInerH1-HolderBottomEp])
+   translate ([1, halfDist(HolderWide, 1+2*1), HolderInerH1-HolderBottomEp])
     rotate([0, angleXYPlane([HolderLong, 0, HolderInerH2-HolderInerH1]), 0])
-      rail([HolderLong-2, 0.5, 1], HolderRailDist); // rail top
+      rail([HolderLong-2, 1, 1], HolderRailDist); // rail top
 
 }
 
@@ -167,9 +167,9 @@ module baseButton() {
   difference(){
     union(){
       baseSolid();
-      translate([BaseLong-BaseKnurledEp-0.5, 1, BaseEndHeight+0.3])
+      translate([BaseLong-BaseKnurledEp-0.5, 1, BaseEndHeight+0.4])
         rotate([0, angleXYPlane([BaseLong-BaseFracture, 0, BaseEndHeight-BaseFractureHeight ]), 0])
-          knurled([BaseKnurledEp, BaseLarg-BaseLargMinus*4, 0.2], 0.15, 0.4);
+          knurled([BaseKnurledEp, BaseLarg-BaseLargMinus*4, 0.4], 0.34, 0.8);
     }
     translate([-0.8, 1, 0])  wedge([BaseLong, BaseLarg-2, BaseLarg-(2*BaseLargMinus)-2, 2, 2]);
   }
@@ -197,16 +197,18 @@ module knurled(size=[20, 20, 0.5], pic=0.3, bevel=0.5){
 
 }
 
+back = -4.5;
+
 union(){
   difference(){
     rotate([0, angleXYPlane([18.5,0,-1])]) baseButton();
-    translate([-3, halfDist(15, 8) , -2.8]) holderHole();
+    translate([back, halfDist(15, 8) , -2.8]) holderHole();
   }
 
   difference(){
-    translate([-3, halfDist(15, 8) , -2.8]) holder();
+    translate([back, halfDist(15, 8) , -2.8]) holder();
     difference(){
-      translate([-3, halfDist(15, 8) , -2.8]) holder();
+      translate([back, halfDist(15, 8) , -2.8]) holder();
       rotate([0, angleXYPlane([18.5,0,-1])]) baseSolid();
       translate([-15, 0, 0]) cube([30, 30, 30], center=true);
       translate([0, 0, -20]) cube([40, 40, 40], center=true);
